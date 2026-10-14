@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办事项</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, sans-serif;
+        }
+        body {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .input-area {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        #todoInput {
+            flex: 1;
+            padding: 10px 14px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        #addBtn {
+            padding: 10px 20px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size:16px;
+        }
+        #addBtn:hover {
+            background-color: #1d4ed8;
+        }
+        ul {
+            list-style: none;
+        }
+        li {
+            padding:12px 14px;
+            background: #f3f4f6;
+            border-radius:6px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>待办事项清单</h1>
+    <div class="input-area">
+        <input type="text" id="todoInput" placeholder="输入新的待办事项...">
+        <button id="addBtn">新增</button>
+    </div>
+    <ul id="todoList"></ul>
+
+    <script>
+        // 获取元素
+        const input = document.getElementById('todoInput');
+        const addBtn = document.getElementById('addBtn');
+        const list = document.getElementById('todoList');
+
+        // 添加待办函数
+        function addTodo() {
+            const text = input.value.trim();
+            if (!text) return; // 空内容不添加
+
+            const li = document.createElement('li');
+            li.innerText = text;
+            list.appendChild(li);
+
+            // 清空输入框
+            input.value = '';
+        }
+
+        // 点击按钮新增
+        addBtn.addEventListener('click', addTodo);
+        // 回车也可以新增
+        input.addEventListener('keydown', e => {
+            if(e.key === 'Enter') addTodo();
+        })
+    </script>
+</body>
+</html>
