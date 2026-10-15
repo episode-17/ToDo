@@ -97,10 +97,18 @@
             color:#333;
             border-radius:6px;
             margin-bottom: 10px;
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
         body.dark li {
             background: #222222;
             color:#dddddd;
+        }
+        /* 已完成文字加删除线 */
+        .todo-text.done {
+            text-decoration: line-through;
+            opacity:0.6;
         }
     </style>
 </head>
@@ -122,6 +130,9 @@
         const list = document.getElementById('todoList');
         const toggleBtn = document.getElementById('toggleThemeBtn');
         const body = document.body;
+
+        // 待办数组
+        let todoListData = [];
 
         // 读取本地存储的主题
         function loadTheme() {
@@ -146,14 +157,55 @@
             }
         }
 
+        // 从localStorage加载待办
+        function loadTodos(){
+            const saved = localStorage.getItem('todo-data');
+            if(saved){
+                todoListData = JSON.parse(saved);
+            }
+            renderTodos();
+        }
+        // 保存待办到localStorage
+        function saveTodos(){
+            localStorage.setItem('todo-data', JSON.stringify(todoListData));
+        }
+        // 渲染列表
+        function renderTodos(){
+            list.innerHTML = '';
+            todoListData.forEach((item, index)=>{
+                const li = document.createElement('li');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = item.done;
+
+                const span = document.createElement('span');
+                span.className = 'todo-text' + (item.done ? ' done' : '');
+                span.innerText = item.text;
+
+                // 复选框切换事件
+                checkbox.onchange = ()=>{
+                    todoListData[index].done = checkbox.checked;
+                    saveTodos();
+                    renderTodos();
+                }
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                list.appendChild(li);
+            })
+        }
+
         // 添加待办函数
         function addTodo() {
             const text = input.value.trim();
             if (!text) return; // 空内容不添加
 
-            const li = document.createElement('li');
-            li.innerText = text;
-            list.appendChild(li);
+            todoListData.push({
+                text:text,
+                done:false
+            })
+            saveTodos();
+            renderTodos();
             // 清空输入框
             input.value = '';
         }
@@ -164,8 +216,10 @@
         input.addEventListener('keydown', e => {
             if(e.key === 'Enter') addTodo();
         })
-        // 页面加载时读取主题
+
+        // 页面加载
         loadTheme();
+        loadTodos();
     </script>
 </body>
 </html>
