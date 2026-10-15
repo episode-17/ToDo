@@ -15,11 +15,41 @@
             max-width: 600px;
             margin: 50px auto;
             padding: 0 20px;
+            /* 浅色主题默认样式 */
+            background-color: #ffffff;
+            color: #333333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* 深色主题class，切换时加到body上 */
+        body.dark {
+            background-color: #000000;
+            color: #a9a9a9;
         }
         h1 {
             text-align: center;
             margin-bottom: 30px;
             color: #333;
+        }
+        body.dark h1 {
+            color: #a9a9a9;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom:30px;
+        }
+        #toggleThemeBtn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size:14px;
+            background-color:#2563eb;
+            color:white;
+        }
+        body.dark #toggleThemeBtn {
+            background-color:#8010b8e5;
         }
         .input-area {
             display: flex;
@@ -32,18 +62,31 @@
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 6px;
+            background:#fff;
+            color:#333;
+        }
+        body.dark #todoInput {
+            background:#222222;
+            color:#eee;
+            border-color:#444;
         }
         #addBtn {
             padding: 10px 20px;
             background-color: #2563eb;
-            color: white;
+            color: rgb(255, 255, 255);
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-size:16px;
         }
+        body.dark #addBtn {
+            background-color: #8010b8e5;
+        }
         #addBtn:hover {
             background-color: #1d4ed8;
+        }
+        body.dark #addBtn:hover {
+            background-color: #640891e5;
         }
         ul {
             list-style: none;
@@ -51,13 +94,21 @@
         li {
             padding:12px 14px;
             background: #f3f4f6;
+            color:#333;
             border-radius:6px;
             margin-bottom: 10px;
+        }
+        body.dark li {
+            background: #222222;
+            color:#dddddd;
         }
     </style>
 </head>
 <body>
-    <h1>待办事项清单</h1>
+    <div class="header-row">
+        <h1>待办事项清单</h1>
+        <button id="toggleThemeBtn">切换深色</button>
+    </div>
     <div class="input-area">
         <input type="text" id="todoInput" placeholder="输入新的待办事项...">
         <button id="addBtn">新增</button>
@@ -69,6 +120,31 @@
         const input = document.getElementById('todoInput');
         const addBtn = document.getElementById('addBtn');
         const list = document.getElementById('todoList');
+        const toggleBtn = document.getElementById('toggleThemeBtn');
+        const body = document.body;
+
+        // 读取本地存储的主题
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('todo-theme');
+            if(savedTheme === 'dark'){
+                body.classList.add('dark');
+                toggleBtn.innerText = "切换浅色";
+            }else{
+                body.classList.remove('dark');
+                toggleBtn.innerText = "切换深色";
+            }
+        }
+        // 切换主题函数
+        function toggleTheme() {
+            body.classList.toggle('dark');
+            if(body.classList.contains('dark')){
+                localStorage.setItem('todo-theme','dark');
+                toggleBtn.innerText = "切换浅色";
+            }else{
+                localStorage.setItem('todo-theme','light');
+                toggleBtn.innerText = "切换深色";
+            }
+        }
 
         // 添加待办函数
         function addTodo() {
@@ -78,17 +154,18 @@
             const li = document.createElement('li');
             li.innerText = text;
             list.appendChild(li);
-
             // 清空输入框
             input.value = '';
         }
 
-        // 点击按钮新增
+        // 绑定事件
+        toggleBtn.addEventListener('click', toggleTheme);
         addBtn.addEventListener('click', addTodo);
-        // 回车也可以新增
         input.addEventListener('keydown', e => {
             if(e.key === 'Enter') addTodo();
         })
+        // 页面加载时读取主题
+        loadTheme();
     </script>
 </body>
 </html>
